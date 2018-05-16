@@ -1,10 +1,15 @@
-
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
+import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import static io.restassured.RestAssured.given;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 
 public class POSTRequestDemo {
@@ -12,14 +17,17 @@ public class POSTRequestDemo {
     public void setup () {
         RestAssured.baseURI = "https://maps.googleapis.com";
         RestAssured.basePath = "/maps/api/";
-        //RestAssured.basePath = "/maps/api/place/details/json?";
+     /*
+        API_key1 = AIzaSyDaH4HZ_rHSGrNeiLJetnFyAd2vxtDxOpY
+        API_key2 = AIzaSyCPWu4gt6sxGQl1aJGjGZaPzp8Gjm9Im3c
+*/
     }
 
 
     @Test(enabled=true)
     public void statusCodeVerification () {
         given ()
-                .param("key", "AIzaSyDaH4HZ_rHSGrNeiLJetnFyAd2vxtDxOpY") //AIzaSyCPWu4gt6sxGQl1aJGjGZaPzp8Gjm9Im3c
+                .queryParam("key", "AIzaSyCPWu4gt6sxGQl1aJGjGZaPzp8Gjm9Im3c")
                 .body ("{\n" +
                         "  \"location\": {\n" +
                         "    \"lat\": -33.8669710,\n" +
@@ -33,12 +41,45 @@ public class POSTRequestDemo {
                         "  \"website\": \"http://www.google.com.au/\",\n" +
                         "  \"language\": \"en-AU\"\n" +
                         "}")
-                // .param("key", "AIzaSyDaH4HZ_rHSGrNeiLJetnFyAd2vxtDxOpY")
+
 
                 .when()
-                    .get("//place/add/json")
+                    .post("/place/add/json")
                 .then()
-                    .statusCode(200);
+                    .statusCode(200).and()
+                    .contentType(ContentType.JSON).and ()
+                    .body("scope", equalTo ("APP")).and()
+                    //.body("id", equalTo ("066d3edac51ba138cf621572884805fb56c98460")).and()
+                    .body("status", equalTo("OK"));
+
+    }
+    @Test(enabled=true)
+    public void printResponseBody () {
+        Map<String, Double> locationMap= new HashMap<String, Double>();
+        locationMap.put("lat", -33.8669710);
+        locationMap.put("lng", 151.1958750);
+
+        ArrayList<String > types = new ArrayList<String>();
+        types.add("shoe_store");
+        PlacesAndModel places = new PlacesAndModel();
+        places.setLocation(locationMap);
+        places.getAccuracy(50);
+        places.setPhone_number("(02) 9374 4000");
+        places.getAddresss("48 Pirrama Road, Pyrmont, NSW 2009, Australia");
+        places.setTypes(types);
+        places.setWebsite("http://www.google.com.au");
+        places.setLanguage("en-AU");
+
+
+       Response resp =  given ()
+                .queryParam("key", "AIzaSyCPWu4gt6sxGQl1aJGjGZaPzp8Gjm9Im3c")
+                .body (places)
+                .contentType(ContentType.JSON)
+                .when()
+                .post("/place/add/json");
+        System.out.println(resp.body().asString());
+
+
 
     }
 }

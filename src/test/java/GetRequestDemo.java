@@ -11,16 +11,15 @@ public class GetRequestDemo {
     public void setup () {
         RestAssured.baseURI = "https://maps.googleapis.com";
         RestAssured.basePath = "/maps/api/";
-        //RestAssured.basePath = "/maps/api/place/details/json?";
     }
 
     @Test (enabled=true)
     public void statusCodeVerification () {
         given ()
-                .param("unit", "imperial")
+                .param("units", "imperial")
                 .param ("origins","Washington,DC")
                 .param("destinations", "New+York+City,NY")
-                .param("key", "AIzaSyDaH4HZ_rHSGrNeiLJetnFyAd2vxtDxOpY")
+                .param("key", "AIzaSyCPWu4gt6sxGQl1aJGjGZaPzp8Gjm9Im3c")
                 .when()
                 .get("/distancematrix/json")
                 .then()
@@ -34,10 +33,10 @@ public class GetRequestDemo {
     public void getResponseBody () {
         Response res  =
                 given ()
-                        .param("unit", "imperial")
+                        .param("units", "imperial")
                         .param ("origins","Washington,DC")
                         .param("destinations", "New+York+City,NY")
-                        .param("key", "AIzaSyDaH4HZ_rHSGrNeiLJetnFyAd2vxtDxOpY")
+                        .param("key", "AIzaSyCPWu4gt6sxGQl1aJGjGZaPzp8Gjm9Im3c")
                         .when()
                         .get("/distancematrix/json");
         System.out.println(res.body().prettyPrint());
