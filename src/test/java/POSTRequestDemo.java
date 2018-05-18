@@ -1,6 +1,5 @@
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -49,10 +48,11 @@ public class POSTRequestDemo {
                     .statusCode(200).and()
                     .contentType(ContentType.JSON).and ()
                     .body("scope", equalTo ("APP")).and()
-                    //.body("id", equalTo ("066d3edac51ba138cf621572884805fb56c98460")).and()
                     .body("status", equalTo("OK"));
 
     }
+
+
     @Test(enabled=true)
     public void printResponseBody () {
         Map<String, Double> locationMap= new HashMap<String, Double>();
@@ -71,13 +71,19 @@ public class POSTRequestDemo {
         places.setLanguage("en-AU");
 
 
-       Response resp =  given ()
+       //Response resp =
+         given ()
                 .queryParam("key", "AIzaSyCPWu4gt6sxGQl1aJGjGZaPzp8Gjm9Im3c")
                 .body (places)
-                .contentType(ContentType.JSON)
-                .when()
-                .post("/place/add/json");
-        System.out.println(resp.body().asString());
+        .when()
+                .post("/place/add/json")
+        //System.out.println(resp.body().asString());
+         .then()
+                .statusCode(200).and()
+                .contentType(ContentType.JSON).and ()
+                .body("scope", equalTo ("APP")).and()
+                .body("status", equalTo("OK"));
+
 
 
 
